@@ -11,7 +11,7 @@ import { clinic } from "../content";
 // Safety: даже если ничего не пришло, скрываем через `MAX_MS`, чтобы не блокировать UX.
 // Min-visible: держим лоадер ≥ MIN_MS чтобы не было флэшей "мелькнуло и пропало".
 
-const FONT = "'Open Sauce One', -apple-system, BlinkMacSystemFont, sans-serif";
+const FONT = "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 const MIN_MS = 400;
 const MAX_MS = 4000;
 
@@ -35,17 +35,27 @@ export default function HeroLoader() {
       window.setTimeout(() => setHidden(true), wait);
     };
 
+    let listening = false;
     const check = () => {
+      // Постер первой сцены уже на экране - пустоты нет, лоадер можно убирать,
+      // видео доедет следом и плавно заменит кадр. Иначе ждём первый кадр клипа.
+      const img = document.querySelector<HTMLImageElement>(".sw-scene img");
+      if (img && img.complete && img.naturalWidth > 0) {
+        finish();
+        return;
+      }
       const v = document.querySelector<HTMLVideoElement>(".sw-scene video");
       if (!v) return;
-      window.clearInterval(iv);
       // readyState ≥ 2 = HAVE_CURRENT_DATA (первый кадр уже декодирован)
       if (v.readyState >= 2) {
         finish();
         return;
       }
-      v.addEventListener("loadeddata", finish, { once: true });
-      v.addEventListener("canplay", finish, { once: true });
+      if (!listening) {
+        listening = true;
+        v.addEventListener("loadeddata", finish, { once: true });
+        v.addEventListener("canplay", finish, { once: true });
+      }
     };
 
     iv = window.setInterval(check, 100);

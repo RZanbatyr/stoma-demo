@@ -5,7 +5,7 @@ import type { HeroScene } from "../content";
 
 const BASE = import.meta.env.BASE_URL;
 const S = `${BASE}scroll/`;
-const FONT = "'Open Sauce One', -apple-system, BlinkMacSystemFont, sans-serif";
+const FONT = "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 // Разворачиваем короткие имена файлов из content.ts в пути public/
 function buildSection(scene: HeroScene) {
